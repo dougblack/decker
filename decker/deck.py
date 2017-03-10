@@ -11,6 +11,8 @@ IMAGE_WIDTH = 312
 IMAGE_HEIGHT = 445
 CARD_WIDTH = IMAGE_WIDTH + 2 * X_OFFSET
 CARD_HEIGHT = IMAGE_HEIGHT + 2 * Y_OFFSET
+DECK_IMAGE_COLS = 10
+DECK_IMAGE_ROWS = 7
 
 
 class Deck(object):
@@ -37,16 +39,16 @@ class Deck(object):
             deck_num = i // 69;
             deck_id = i % 69;
 
-            grid_x = deck_id % 10;
-            grid_y = deck_id // 10;
+            grid_x = deck_id % DECK_IMAGE_COLS;
+            grid_y = deck_id // DECK_IMAGE_COLS;
 
             real_x = grid_x * CARD_WIDTH + X_OFFSET;
             real_y = grid_y * CARD_HEIGHT + Y_OFFSET;
 
-            region = (real_x, real_y)
-            deck_image.paste(card.image(), region);
+            deck_image.paste(card.image(), (real_x, real_y));
 
-        deck_image.paste(self.hidden_image(), (CARD_WIDTH * 9, CARD_HEIGHT * 6))
+        top_left_corner = (CARD_WIDTH * (DECK_IMAGE_COLS - 1), CARD_HEIGHT * (DECK_IMAGE_ROWS - 1))
+        deck_image.paste(self.hidden_image(), top_left_corner)
 
         self._image = deck_image
         return self._image

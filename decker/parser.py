@@ -30,7 +30,7 @@ class Parser(object):
 if __name__ == '__main__':
     lines = [
         '1 Swamp',
-        '20 Wrangle',
+        '10 Wrangle',
         'Aetherflux Reservoir'
     ]
     parser = Parser(lines)
