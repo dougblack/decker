@@ -36,16 +36,16 @@ class Deck(object):
     def image(self):
         deck_image = Image.new('RGB', (CARD_WIDTH * 10, CARD_HEIGHT * 7))
         for i, card in enumerate(self.cards):
-            deck_num = i // 69;
-            deck_id = i % 69;
+            deck_num = i // 69
+            deck_id = i % 69
 
-            grid_x = deck_id % DECK_IMAGE_COLS;
-            grid_y = deck_id // DECK_IMAGE_COLS;
+            grid_x = deck_id % DECK_IMAGE_COLS
+            grid_y = deck_id // DECK_IMAGE_COLS
 
-            real_x = grid_x * CARD_WIDTH + X_OFFSET;
-            real_y = grid_y * CARD_HEIGHT + Y_OFFSET;
+            real_x = grid_x * CARD_WIDTH + X_OFFSET
+            real_y = grid_y * CARD_HEIGHT + Y_OFFSET
 
-            deck_image.paste(card.image(), (real_x, real_y));
+            deck_image.paste(card.image(), (real_x, real_y))
 
         top_left_corner = (CARD_WIDTH * (DECK_IMAGE_COLS - 1), CARD_HEIGHT * (DECK_IMAGE_ROWS - 1))
         deck_image.paste(self.hidden_image(), top_left_corner)
