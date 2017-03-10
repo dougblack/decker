@@ -9,7 +9,7 @@ class Gatherer(object):
 
     base = 'https://api.magicthegathering.io'
 
-    def card(self, name):
+    def retrieve(self, name):
         response = requests.get(
             '{}/v1/cards?name="{}"'.format(self.base, name)
         )
@@ -22,5 +22,4 @@ class Gatherer(object):
             print('No cards')
             return None
         card = cards[0]
-        new_card = Card.from_data(card)
-        return new_card
+        return card

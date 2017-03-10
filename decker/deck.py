@@ -1,7 +1,8 @@
 from PIL import Image
-import requests
-from io import BytesIO
 
+from decker import image_from_url
+from decker.card import Card
+from decker.card_cache import CardCache
 from decker.gatherer import Gatherer
 
 
@@ -24,13 +25,20 @@ class Deck(object):
         self.cards = []
         self._hidden_image = None
         self._card_back_image = None
+        self._card_cache = CardCache()
+
+    def hydrate_card(self, name):
+        cache_hit = self._card_cache.get(name)
+        if cache_hit:
+            return cache_hit
+        else:
+            card_data = self.gatherer.retrieve(name)
+            card = Card(card_data['name'], card_data['imageUrl'], card_data.get('text'))
+            self._card_cache.set(card)
+            return card
 
     def hydrate(self):
-        for card in self.card_names:
-            new_card = self.gatherer.card(card)
-            print(new_card)
-            new_card.image()
-            self.cards.append(new_card)
+        self.cards = [self.hydrate_card(card) for card in self.card_names]
         return self.cards
 
     def image(self):
@@ -45,10 +53,11 @@ class Deck(object):
             real_x = grid_x * CARD_WIDTH + X_OFFSET
             real_y = grid_y * CARD_HEIGHT + Y_OFFSET
 
-            deck_image.paste(card.image(), (real_x, real_y))
+            deck_image.paste(card.image, (real_x, real_y))
 
         top_left_corner = (CARD_WIDTH * (DECK_IMAGE_COLS - 1), CARD_HEIGHT * (DECK_IMAGE_ROWS - 1))
         deck_image.paste(self.hidden_image(), top_left_corner)
+        deck_image.save('bar.jpg')
 
         self._image = deck_image
         return self._image
@@ -56,15 +65,11 @@ class Deck(object):
     def hidden_image(self):
         if self._hidden_image:
             return self._hidden_image
-        response = requests.get(self.hidden_url)
-        self._hidden_image = Image.open(BytesIO(response.content))
-        self._hidden_image = self._hidden_image.resize((312, 445))
+        self._hidden_image = image_from_url(self.hidden_url)
         return self._hidden_image
 
     def card_back_image(self):
         if self._card_back_image:
             return self._card_back_image
-        response = requests.get(self.card_back_url)
-        self._card_back_image = Image.open(BytesIO(response.content))
-        self._card_back_image = self._card_back_image.resize((312, 445))
+        self._card_back_image = image_from_url(self.card_back_url)
         return self._card_back_image
