@@ -49,6 +49,6 @@ when loading a new deck into TTS. Each of these would be their own stack.
 ### JSON
 
 The JSON file tells TTS
-a) how to slice the sheet images up to make individual cards
-b) the names of individual cards
-c) the different card stacks and where to spawn them in-game.
+1. how to slice the sheet images up to make individual cards
+2. the names of individual cards
+3. the different card stacks and where to spawn them in-game.
