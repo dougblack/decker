@@ -1,7 +1,7 @@
 import json
 import re
 from decker.deck import Deck
-from decker.stack import Stack
+from decker import stack
 from decker.card import Card
 
 
@@ -33,10 +33,10 @@ class Parser(object):
 
 if __name__ == '__main__':
     stacks = {
-        Stack.COMMANDER: [
+        stack.Commander: [
             'Sliver Overlord'
         ],
-        Stack.MAINBOARD: [
+        stack.Mainboard: [
             '1 Battering Sliver',
             '1 Blade Sliver',
             '1 Blur Sliver',

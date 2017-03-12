@@ -6,7 +6,7 @@ class Card(object):
     Represents a card.
 
     Cards are responsible for knowing their images and what stack they're
-    going to be a member of.
+    in.
     """
     def __init__(self, name, stack, image_url=None, text=None, image=None):
         self.name = name

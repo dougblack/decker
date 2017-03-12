@@ -7,10 +7,9 @@ from collections import defaultdict
 
 from imgurpython import ImgurClient
 
-from decker import image_from_url
+from decker import image_from_url, stack
 from decker.card_cache import CardCache
 from decker.gatherer import Gatherer
-from decker.transforms import TRANSFORMS
 
 
 X_OFFSET = 10
@@ -34,16 +33,17 @@ class Deck(object):
         self._card_cache = CardCache()
 
     def hydrate_card(self, card):
+        stack = card.stack
         cache_hit = self._card_cache.get(card.name)
         if cache_hit:
             card = cache_hit
+            card.stack = stack
         else:
             card_data = self.gatherer.retrieve(card.name)
             card.name = card_data['name']
             card.image_url = card_data['imageUrl']
             card.text = card_data.get('text')
             self._card_cache.set(card)
-            card = card
         return card
 
     def hydrate(self):
@@ -60,7 +60,7 @@ class Deck(object):
             sheet_id = i // 69
             card_sheet_id = i % 69
 
-            card.json_id = 100 * (1 + sheet_id) + card_sheet_id
+            card.deck_id = 100 * (1 + sheet_id) + card_sheet_id
             card.sheet_id = sheet_id
 
             grid_x = card_sheet_id % X_OFFSET
@@ -116,7 +116,7 @@ class Deck(object):
             guid = hex(random.randint(0, (16 ** 6) - 1))[2:]
             object_state = {
                 'Name': 'DeckCustom',
-                'Nickname': stack,
+                'Nickname': stack.name,
                 'Description': '',
                 'Grid': True,
                 'Locked': False,
@@ -129,17 +129,17 @@ class Deck(object):
                 },
                 'DeckIDs': [],
                 'ContainedObjects': [],
-                'Transform': TRANSFORMS[stack],
+                'Transform': stack.position,
                 'CustomDeck': {}
             }
             for card in cards:
-                object_state['DeckIDs'].append(card.json_id)
+                object_state['DeckIDs'].append(card.deck_id)
                 object_state['ContainedObjects'].append(
                     {
                         'Name': 'Card',
                         'Nickname': card.name,
-                        'CardID': card.json_id,
-                        'Transform': TRANSFORMS[stack]
+                        'CardID': card.deck_id,
+                        'Transform': stack.position,
                     }
                 )
                 if str(card.sheet_id + 1) not in object_state['CustomDeck']:
