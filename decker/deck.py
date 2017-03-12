@@ -19,8 +19,8 @@ IMAGE_WIDTH = 312
 IMAGE_HEIGHT = 445
 CARD_WIDTH = IMAGE_WIDTH + 2 * X_OFFSET
 CARD_HEIGHT = IMAGE_HEIGHT + 2 * Y_OFFSET
-DECK_IMAGE_COLS = 10
-DECK_IMAGE_ROWS = 7
+SHEET_IMAGE_COLS = 10
+SHEET_IMAGE_ROWS = 7
 
 
 class Deck(object):
@@ -49,39 +49,39 @@ class Deck(object):
     def hydrate(self):
         print('Hydrating cards...')
         self.cards = [self.hydrate_card(card) for card in self.cards]
-        image_paths = self.image()
+        image_paths = self.stitch()
         image_links = self.upload(image_paths)
         return self.json(image_links)
 
-    def image(self):
+    def stitch(self):
         print('Stitching deck...')
-        deck_images = []
+        sheet_images = []
         for i, card in enumerate(self.cards):
-            deck_id = i // 69
-            card_deck_id = i % 69
+            sheet_id = i // 69
+            card_sheet_id = i % 69
 
-            card.json_id = 100 * (1 + deck_id) + card_deck_id
-            card.deck_id = deck_id
+            card.json_id = 100 * (1 + sheet_id) + card_sheet_id
+            card.sheet_id = sheet_id
 
-            grid_x = card_deck_id % X_OFFSET
-            grid_y = card_deck_id // Y_OFFSET
+            grid_x = card_sheet_id % X_OFFSET
+            grid_y = card_sheet_id // Y_OFFSET
 
             real_x = grid_x * CARD_WIDTH + X_OFFSET
             real_y = grid_y * CARD_HEIGHT + Y_OFFSET
 
-            if deck_id >= len(deck_images):
-                deck_images.append(Image.new('RGB', (CARD_WIDTH * 10, CARD_HEIGHT * 7)))
+            if sheet_id >= len(sheet_images):
+                sheet_images.append(Image.new('RGB', (CARD_WIDTH * 10, CARD_HEIGHT * 7)))
 
-            deck_images[-1].paste(card.image, (real_x, real_y))
+            sheet_images[-1].paste(card.image, (real_x, real_y))
 
         image_files = []
 
-        for i, deck_image in enumerate(deck_images):
-            bottom_right = (CARD_WIDTH * (DECK_IMAGE_COLS - 1), CARD_HEIGHT * (DECK_IMAGE_ROWS - 1))
-            deck_image.paste(self.hidden_image(), bottom_right)
+        for i, sheet_image in enumerate(sheet_images):
+            bottom_right = (CARD_WIDTH * (SHEET_IMAGE_COLS - 1), CARD_HEIGHT * (SHEET_IMAGE_ROWS - 1))
+            sheet_image.paste(self.hidden_image(), bottom_right)
 
             file = tempfile.NamedTemporaryFile(delete=False)
-            deck_image.save(file.name, 'JPEG')
+            sheet_image.save(file.name, 'JPEG')
             image_files.append(file.name)
 
         return image_files
@@ -142,9 +142,9 @@ class Deck(object):
                         'Transform': TRANSFORMS[stack]
                     }
                 )
-                if str(card.deck_id) not in object_state['CustomDeck']:
-                    object_state['CustomDeck'][str(card.deck_id + 1)] = {
-                        'FaceURL': image_links[card.deck_id],
+                if str(card.sheet_id + 1) not in object_state['CustomDeck']:
+                    object_state['CustomDeck'][str(card.sheet_id + 1)] = {
+                        'FaceURL': image_links[card.sheet_id],
                         'BackURL': self.card_back_url
                     }
             data['ObjectStates'].append(object_state)
@@ -156,12 +156,6 @@ class Deck(object):
             return self._hidden_image
         self._hidden_image = image_from_url(self.hidden_url)
         return self._hidden_image
-
-    def card_back_image(self):
-        if self._card_back_image:
-            return self._card_back_image
-        self._card_back_image = image_from_url(self.card_back_url)
-        return self._card_back_image
 
     @property
     def stacks(self):
