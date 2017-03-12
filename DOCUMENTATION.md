@@ -34,8 +34,8 @@ multiple lookups for duplicates.
 TTS expects deck images in single image sheets of 69 cards (and one slot for a
 hidden card). Each sheets can hold 7 rows and 10 columns of images. So, we could
 represent a 52 card deck in one sheet, but it would take two sheets to make an
-80 card deck. The JSON file we load into TTS tells TTS how to slice the deck
-image into individual cards.
+80 card deck. The JSON file we load into TTS tells TTS how to slice the sheet
+images into individual cards.
 
 In decker, we stitch the cards into groups of 69, produce a sheet image, and upload that
 sheet image to Imgur.
