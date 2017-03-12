@@ -5,16 +5,15 @@ class Card(object):
     """
     Represents a card.
 
-    Cards are responsible for knowing their images and what stack they're going
-    to be a member of.
+    Cards are responsible for knowing their images and what stack they're
+    going to be a member of.
     """
-    def __init__(self, name, image_url, text=None, image=None):
+    def __init__(self, name, stack, image_url=None, text=None, image=None):
         self.name = name
+        self.stack = stack
         self.image_url = image_url
         self.text = text
         self._image = image
-        self._stack = None
-        self.image  # greedy load image
 
     def __repr__(self):
         return '<{} {}>'.format(self.name, self.image_url)
