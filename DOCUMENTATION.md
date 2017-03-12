@@ -32,7 +32,7 @@ multiple lookups for duplicates.
 ### Deck Images
 
 TTS expects deck images in single image sheets of 69 cards (and one slot for a
-hidden card). These deck can hold 7 rows and 10 columns of images. So, we could
+hidden card). Each sheets can hold 7 rows and 10 columns of images. So, we could
 use represent a 52 card deck in one sheet, but it would take two sheets to make
 an 80 card deck. The JSON file we load into TTS tells TTS how to slice the deck
 image into individual cards.
